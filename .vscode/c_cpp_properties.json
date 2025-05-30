@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Emscripten WebAssembly",
+            "includePath": [
+                "${workspaceFolder}/emsdk/upstream/emscripten/system/include/**",
+                "${workspaceFolder}/emsdk/upstream/emscripten/cache/sysroot/include/**",
+                "${workspaceFolder}/raylib/src/**",
+                "${workspaceFolder}/src/**"
+            ],
+            "defines": [
+                "__EMSCRIPTEN__=1",
+                "PLATFORM_WEB=1",
+                "GRAPHICS_API_OPENGL_ES2=1"
+            ],
+            "compilerPath": "${workspaceFolder}/emsdk/upstream/emscripten/em++",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+} 

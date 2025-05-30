@@ -1,0 +1,37 @@
+CompileFlags:
+  Add: 
+    - "-I./raylib/src"
+    - "--sysroot=./emsdk/upstream/emscripten/cache/sysroot"
+    - "-isysroot"
+    - "./emsdk/upstream/emscripten/cache/sysroot"
+    - "-I./emsdk/upstream/lib/clang/21/include"
+    - "-I./emsdk/upstream/emscripten/cache/sysroot/include/wasm32-emscripten"
+    - "-I./emsdk/upstream/emscripten/cache/sysroot/include"
+    - "-iwithsysroot/include/fakesdl"
+    - "-iwithsysroot/include/compat"
+    - "-D__EMSCRIPTEN__=1"
+    - "-DPLATFORM_WEB=1" 
+    - "-DGRAPHICS_API_OPENGL_ES2=1"
+    - "-DEMSCRIPTEN"
+    - "-std=c++17"
+    - "-target"
+    - "wasm32-unknown-emscripten"
+    - "-fignore-exceptions"
+  Remove:
+    - "-march=*"
+    - "-mtune=*"
+
+Index:
+  Background: Build
+
+Diagnostics:
+  ClangTidy:
+    Add: 
+      - readability-*
+      - performance-*
+    Remove:
+      - readability-magic-numbers
+      - readability-uppercase-literal-suffix
+
+Hover:
+  ShowAKA: true 
