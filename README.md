@@ -1,18 +1,30 @@
-# 🚀 C++ WebAssembly with Raylib
+# Ramla Engine
 
-A complete C++ WebAssembly project using Emscripten and Raylib that renders graphics in the browser. This demo draws a simple red rectangle and demonstrates calling C++ functions from JavaScript.
+An immediate mode UI rendering engine built with C++ WebAssembly and Raylib. Ramla Engine provides an alternative to DOM-based rendering by mapping a custom DSL (Domain Specific Language) directly to immediate mode draw calls, delivering high-performance graphics in web browsers.
 
 ![Demo Preview](https://img.shields.io/badge/Demo-Working-brightgreen) ![Platform](https://img.shields.io/badge/Platform-WebAssembly-blue) ![Language](https://img.shields.io/badge/Language-C%2B%2B17-orange)
 
-## ✨ Features
+## Overview
 
-- 🎮 **Raylib Graphics** - Hardware-accelerated 2D graphics in the browser
-- 🌐 **WebAssembly** - High-performance C++ code running in web browsers
-- 🔄 **Bidirectional** - Call C++ functions from JavaScript and vice versa
-- 🛠️ **Modern Tooling** - Full IDE support with clangd configuration
-- 📱 **Responsive** - Works on desktop and mobile browsers
+Traditional web UIs rely on the DOM (Document Object Model) for rendering, which can become a performance bottleneck for complex interfaces or real-time graphics. Ramla Engine takes a different approach:
 
-## 🚀 Quick Start
+- **Immediate Mode Rendering**: Direct draw calls without intermediate DOM manipulation
+- **Custom DSL**: High-level UI description language that compiles to optimized graphics commands
+- **WebAssembly Performance**: Near-native performance in web browsers
+- **Raylib Backend**: Proven graphics library with cross-platform support
+
+This architecture enables fluid 60+ FPS interfaces, real-time data visualizations, games, and other graphics-intensive web applications that would struggle with traditional DOM rendering.
+
+## Features
+
+- **Immediate Mode UI**: Direct pixel manipulation without DOM overhead
+- **WebAssembly Performance**: High-performance C++ code running in browsers
+- **Custom DSL Mapping**: Declarative UI syntax compiled to draw calls
+- **Cross-Platform**: Runs on any modern browser supporting WebAssembly
+- **Modern Tooling**: Full IDE support with clangd configuration
+- **Responsive**: Hardware-accelerated rendering on desktop and mobile
+
+## Quick Start
 
 ### 1. Clone the Repository
 ```bash
@@ -31,9 +43,9 @@ chmod +x setup.sh
 make serve
 ```
 
-Then open http://localhost:9999 in your browser!
+Then open http://localhost:9999 in your browser to see the immediate mode rendering demo.
 
-## 📋 Manual Setup (Alternative)
+## Manual Setup (Alternative)
 
 If you prefer to set up dependencies manually:
 
@@ -85,16 +97,16 @@ make
 make serve
 ```
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 ramla-engine/
 ├── src/
-│   └── main.cpp              # C++ source code with raylib graphics
+│   └── main.cpp              # Core immediate mode rendering logic
 ├── public/
-│   └── index.html            # HTML interface with WebGL canvas
+│   └── index.html            # WebGL canvas container
 ├── emsdk/                    # Emscripten SDK (auto-installed)
-├── raylib/                   # Raylib library (auto-installed)
+├── raylib/                   # Raylib graphics library (auto-installed)
 ├── .clangd                   # IDE configuration for syntax highlighting
 ├── compile_commands.json     # Build database for IDEs
 ├── Makefile                  # Build configuration
@@ -103,7 +115,7 @@ ramla-engine/
 └── README.md                 # This file
 ```
 
-## 🔨 Build Commands
+## Build Commands
 
 | Command | Description |
 |---------|-------------|
@@ -113,14 +125,33 @@ ramla-engine/
 | `make serve-node` | Build and serve locally (Node.js) |
 | `make help` | Show all available commands |
 
-## 🎮 Using the Demo
+## Architecture
 
-1. **Open in Browser** - Navigate to http://localhost:9999
-2. **Open Developer Console** (F12) - C++ output appears here
-3. **See the Graphics** - Red rectangle rendered by Raylib
-4. **Click Buttons** - Test JavaScript ↔ C++ communication
+### Immediate Mode Rendering Pipeline
 
-## 🛠️ Development
+1. **DSL Input**: High-level UI description (planned)
+2. **Compilation**: DSL transforms to optimized draw commands
+3. **WebAssembly Execution**: C++ rendering logic runs in browser
+4. **Raylib Backend**: Hardware-accelerated graphics calls
+5. **Canvas Output**: Direct pixel manipulation via WebGL
+
+### Current Demo
+
+The current implementation demonstrates the foundation:
+- WebAssembly module initialization
+- Immediate mode rectangle rendering
+- Text rendering with custom positioning
+- 60 FPS rendering loop
+
+### Planned Features
+
+- Custom DSL parser and compiler
+- Layout management system
+- Event handling for interactive UIs
+- Component abstraction layer
+- Performance profiling tools
+
+## Development
 
 ### IDE Setup
 
@@ -130,27 +161,26 @@ The project includes configuration for modern IDEs:
 - **CLion** - CMake support with proper include paths
 - **Any Editor** - Uses clangd language server
 
-### Adding New Features
+### Adding Rendering Logic
 
-1. **Add C++ Functions**:
+1. **Add Drawing Functions**:
    ```cpp
-   extern "C" {
-       EMSCRIPTEN_KEEPALIVE
-       void myNewFunction() {
-           std::cout << "Hello from C++!" << std::endl;
-           DrawCircle(400, 225, 50, BLUE);
-       }
+   void DrawCustomWidget(int x, int y, int width, int height) {
+       DrawRectangle(x, y, width, height, BLUE);
+       DrawText("Custom Widget", x + 10, y + 10, 20, WHITE);
    }
    ```
 
-2. **Export in Makefile**:
-   ```makefile
-   EXPORTED_FUNCTIONS='["_main", "_sayHello", "_add", "_greet", "_myNewFunction"]'
-   ```
-
-3. **Call from JavaScript**:
-   ```javascript
-   Module._myNewFunction();
+2. **Update Main Loop**:
+   ```cpp
+   void UpdateDrawFrame() {
+       BeginDrawing();
+       ClearBackground(DARKGRAY);
+       
+       DrawCustomWidget(100, 100, 200, 50);
+       
+       EndDrawing();
+   }
    ```
 
 ### Build Options
@@ -165,7 +195,31 @@ make CXXFLAGS="-std=c++17 -O0 -g"
 make CXXFLAGS="-std=c++17 -O3 -DNDEBUG"
 ```
 
-## 🌐 Deployment
+## Performance Characteristics
+
+### DOM vs Immediate Mode
+
+**Traditional DOM Rendering:**
+- Layout recalculation overhead
+- Style computation and cascade
+- Reflow and repaint cycles
+- JavaScript bridge overhead
+
+**Ramla Engine Immediate Mode:**
+- Direct pixel manipulation
+- Predictable rendering costs
+- No layout thrashing
+- Minimal JavaScript overhead
+
+### Benchmarks
+
+The immediate mode approach excels in scenarios with:
+- High-frequency updates (real-time data)
+- Complex animations
+- Custom graphics requirements
+- Performance-critical applications
+
+## Deployment
 
 ### GitHub Pages
 ```bash
@@ -189,25 +243,25 @@ cd public
 python3 -m http.server 8080
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
-**❌ "Module is not defined"**
+**"Module is not defined"**
 - Make sure you're serving through a web server, not opening HTML directly
 - Check browser console for specific errors
 
-**❌ "emcc: command not found"**
+**"emcc: command not found"**
 ```bash
 source emsdk/emsdk_env.sh
 ```
 
-**❌ "raylib.h not found"**
+**"raylib.h not found"**
 ```bash
 cd raylib/src && make PLATFORM=PLATFORM_WEB
 ```
 
-**❌ Build errors**
+**Build errors**
 ```bash
 make clean && make
 ```
@@ -223,37 +277,35 @@ make clean && make
 - The `.clangd` and `compile_commands.json` files provide full IDE support
 - Make sure your editor supports the Language Server Protocol
 
-## 📚 Learn More
+## Resources
 
-### Raylib Resources
-- [Raylib Official Site](https://www.raylib.com/)
-- [Raylib Examples](https://www.raylib.com/examples.html)
-- [Raylib API Reference](https://www.raylib.com/cheatsheet/cheatsheet.html)
+### Immediate Mode UI Concepts
+- [Dear ImGui Documentation](https://github.com/ocornut/imgui)
+- [Immediate Mode GUIs (IMGUI)](https://caseymuratori.com/blog_0001)
+- [Retained vs Immediate Mode](https://docs.microsoft.com/en-us/windows/win32/learnwin32/retained-mode-versus-immediate-mode)
 
 ### WebAssembly Resources
 - [Emscripten Documentation](https://emscripten.org/docs/)
 - [WebAssembly.org](https://webassembly.org/)
 - [MDN WebAssembly Guide](https://developer.mozilla.org/en-US/docs/WebAssembly)
 
-### Next Steps
-- 🎨 Add sprites and animations
-- 🎵 Implement audio with Raylib
-- 🎮 Create a simple game
-- 🔧 Add more complex C++ algorithms
-- 📱 Optimize for mobile devices
+### Raylib Resources
+- [Raylib Official Site](https://www.raylib.com/)
+- [Raylib Examples](https://www.raylib.com/examples.html)
+- [Raylib API Reference](https://www.raylib.com/cheatsheet/cheatsheet.html)
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feature/immediate-mode-feature`)
+3. Commit your changes (`git commit -m 'Add immediate mode feature'`)
+4. Push to the branch (`git push origin feature/immediate-mode-feature`)
 5. Open a Pull Request
 
 ---
 
-**Happy coding!** 🎉 If you build something cool with this template, please share it!
+**Ramla Engine** - Bringing immediate mode UI rendering to the web through WebAssembly and Raylib.
