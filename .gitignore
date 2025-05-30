@@ -1,10 +1,16 @@
 # Build artifacts
 public/main.js
 public/main.wasm
+public/main.html
 
 # External dependencies (git submodules/cloned repos)
 emsdk/
 raylib/
+
+# Build directories
+build/
+build-*/
+out/
 
 # Emscripten cache
 .emscripten_cache/

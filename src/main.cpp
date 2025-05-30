@@ -16,7 +16,7 @@ void UpdateDrawFrame() {
         ClearBackground(RAYWHITE);
         
         // Draw a simple red rectangle in the center
-        DrawRectangle(screenWidth/2 - 100, screenHeight/2 - 50, 200, 100, RED);
+        DrawRectangle((screenWidth/2) - 100, (screenHeight/2) - 50, 200, 100, RED);
         
         // Draw some text
         DrawText("Hello, Raylib WebAssembly!", 190, 200, 20, LIGHTGRAY);
@@ -29,24 +29,24 @@ extern "C" {
     // Keep the original functions for backward compatibility
     EMSCRIPTEN_KEEPALIVE
     void sayHello() {
-        std::cout << "Hello from C++ WebAssembly with Raylib!" << std::endl;
+        std::cout << "Hello from C++ WebAssembly with Raylib!\n";
     }
     
     EMSCRIPTEN_KEEPALIVE
     int add(int a, int b) {
         int result = a + b;
-        std::cout << "C++ calculated: " << a << " + " << b << " = " << result << std::endl;
+        std::cout << "C++ calculated: " << a << " + " << b << " = " << result << "\n";
         return result;
     }
     
     EMSCRIPTEN_KEEPALIVE
     void greet(const char* name) {
-        std::cout << "Hello, " << name << "! Greetings from C++ with Raylib!" << std::endl;
+        std::cout << "Hello, " << name << "! Greetings from C++ with Raylib!\n";
     }
 }
 
 int main() {
-    std::cout << "Raylib WebAssembly module loaded successfully!" << std::endl;
+    std::cout << "Raylib WebAssembly module loaded successfully!\n";
     
     // Initialize raylib
     InitWindow(screenWidth, screenHeight, "Raylib WebAssembly - Rectangle Demo");

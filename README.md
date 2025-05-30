@@ -1,168 +1,259 @@
-# 🚀 C++ WebAssembly with Emscripten
+# 🚀 C++ WebAssembly with Raylib
 
-A simple C++ WebAssembly project using Emscripten that demonstrates calling C++ functions from JavaScript and seeing output in the browser console.
+A complete C++ WebAssembly project using Emscripten and Raylib that renders graphics in the browser. This demo draws a simple red rectangle and demonstrates calling C++ functions from JavaScript.
 
-## 📋 Prerequisites
+![Demo Preview](https://img.shields.io/badge/Demo-Working-brightgreen) ![Platform](https://img.shields.io/badge/Platform-WebAssembly-blue) ![Language](https://img.shields.io/badge/Language-C%2B%2B17-orange)
 
-Before you can build and run this project, you need to install Emscripten:
+## ✨ Features
 
-### Installing Emscripten
+- 🎮 **Raylib Graphics** - Hardware-accelerated 2D graphics in the browser
+- 🌐 **WebAssembly** - High-performance C++ code running in web browsers
+- 🔄 **Bidirectional** - Call C++ functions from JavaScript and vice versa
+- 🛠️ **Modern Tooling** - Full IDE support with clangd configuration
+- 📱 **Responsive** - Works on desktop and mobile browsers
 
-1. **Clone the Emscripten SDK:**
-   ```bash
-   git clone https://github.com/emscripten-core/emsdk.git
-   cd emsdk
-   ```
+## 🚀 Quick Start
 
-2. **Install and activate the latest Emscripten:**
-   ```bash
-   ./emsdk install latest
-   ./emsdk activate latest
-   ```
+### 1. Clone the Repository
+```bash
+git clone <your-repo-url>
+cd ramla-engine
+```
 
-3. **Set up the environment (run this in each new terminal session):**
-   ```bash
-   source ./emsdk_env.sh
-   ```
+### 2. Run the Setup Script
+```bash
+chmod +x setup.sh
+./setup.sh
+```
 
-   Or add this to your shell profile (`.bashrc`, `.zshrc`, etc.) for permanent setup:
-   ```bash
-   echo 'source /path/to/emsdk/emsdk_env.sh' >> ~/.zshrc
-   ```
+### 3. Build and Run
+```bash
+make serve
+```
 
-4. **Verify installation:**
-   ```bash
-   emcc --version
-   ```
+Then open http://localhost:9999 in your browser!
+
+## 📋 Manual Setup (Alternative)
+
+If you prefer to set up dependencies manually:
+
+### Prerequisites
+
+- **Git** - For cloning repositories
+- **Python 3** - For running the local server
+- **Make** - For building the project
+
+### Step 1: Install Emscripten
+
+```bash
+# Clone Emscripten SDK
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+
+# Install and activate latest version
+./emsdk install latest
+./emsdk activate latest
+
+# Set up environment (run this in each terminal session)
+source ./emsdk_env.sh
+cd ..
+```
+
+### Step 2: Install Raylib
+
+```bash
+# Clone Raylib
+git clone https://github.com/raysan5/raylib.git
+
+# Build Raylib for WebAssembly
+cd raylib/src
+source ../../emsdk/emsdk_env.sh
+make PLATFORM=PLATFORM_WEB
+cd ../..
+```
+
+### Step 3: Build the Project
+
+```bash
+# Set up Emscripten environment
+source emsdk/emsdk_env.sh
+
+# Build the WebAssembly module
+make
+
+# Or build and serve in one command
+make serve
+```
 
 ## 🏗️ Project Structure
 
 ```
 ramla-engine/
 ├── src/
-│   └── main.cpp          # C++ source code
+│   └── main.cpp              # C++ source code with raylib graphics
 ├── public/
-│   └── index.html        # HTML interface
-├── Makefile              # Build configuration
-└── README.md            # This file
+│   └── index.html            # HTML interface with WebGL canvas
+├── emsdk/                    # Emscripten SDK (auto-installed)
+├── raylib/                   # Raylib library (auto-installed)
+├── .clangd                   # IDE configuration for syntax highlighting
+├── compile_commands.json     # Build database for IDEs
+├── Makefile                  # Build configuration
+├── CMakeLists.txt            # CMake build configuration
+├── setup.sh                 # Automated setup script
+└── README.md                 # This file
 ```
 
-## 🔨 Building the Project
+## 🔨 Build Commands
 
-1. **Build the WebAssembly module:**
-   ```bash
-   make
-   ```
-   This will generate `main.js` and `main.wasm` files in the `public/` directory.
-
-2. **Clean build artifacts:**
-   ```bash
-   make clean
-   ```
-
-## 🌐 Running the Project
-
-Since WebAssembly requires a web server (due to CORS restrictions), you can use one of these methods:
-
-### Option 1: Using Python (recommended)
-```bash
-make serve
-```
-Then open http://localhost:8000 in your browser.
-
-### Option 2: Using Node.js
-```bash
-make serve-node
-```
-Then open http://localhost:8080 in your browser.
-
-### Option 3: Manual server setup
-```bash
-cd public
-python3 -m http.server 8000
-# or
-npx http-server -p 8080
-```
+| Command | Description |
+|---------|-------------|
+| `make` | Build the WebAssembly module |
+| `make clean` | Remove build artifacts |
+| `make serve` | Build and serve locally (Python) |
+| `make serve-node` | Build and serve locally (Node.js) |
+| `make help` | Show all available commands |
 
 ## 🎮 Using the Demo
 
-1. Open the webpage in your browser
-2. **Open the browser's developer console (F12)** - this is where you'll see the C++ output!
-3. Wait for the "WebAssembly module loaded successfully!" message
-4. Click the buttons to call different C++ functions
-5. Watch the console for messages from your C++ code
+1. **Open in Browser** - Navigate to http://localhost:9999
+2. **Open Developer Console** (F12) - C++ output appears here
+3. **See the Graphics** - Red rectangle rendered by Raylib
+4. **Click Buttons** - Test JavaScript ↔ C++ communication
 
-## 📝 What You'll See
+## 🛠️ Development
 
-The demo includes several C++ functions that output to the browser console:
+### IDE Setup
 
-- **sayHello()**: Prints a simple greeting
-- **add(int, int)**: Adds two numbers and prints the result
-- **greet(const char*)**: Prints a personalized greeting
+The project includes configuration for modern IDEs:
 
-All `std::cout` output from C++ will appear in the browser console with the prefix "C++ Output:".
+- **VS Code/Cursor** - Full IntelliSense with C++, Raylib, and Emscripten
+- **CLion** - CMake support with proper include paths
+- **Any Editor** - Uses clangd language server
 
-## 🔧 Customizing the Code
+### Adding New Features
 
-### Adding New C++ Functions
-
-1. Add your function to `src/main.cpp` with the `EMSCRIPTEN_KEEPALIVE` attribute:
+1. **Add C++ Functions**:
    ```cpp
    extern "C" {
        EMSCRIPTEN_KEEPALIVE
        void myNewFunction() {
-           std::cout << "Hello from my new function!" << std::endl;
+           std::cout << "Hello from C++!" << std::endl;
+           DrawCircle(400, 225, 50, BLUE);
        }
    }
    ```
 
-2. Export it in the Makefile by adding it to `EXPORTED_FUNCTIONS`:
+2. **Export in Makefile**:
    ```makefile
-   EMFLAGS = -s EXPORTED_FUNCTIONS='["_main", "_sayHello", "_add", "_greet", "_myNewFunction"]'
+   EXPORTED_FUNCTIONS='["_main", "_sayHello", "_add", "_greet", "_myNewFunction"]'
    ```
 
-3. Call it from JavaScript:
+3. **Call from JavaScript**:
    ```javascript
    Module._myNewFunction();
    ```
 
-4. Rebuild:
-   ```bash
-   make clean && make
-   ```
+### Build Options
+
+**Development Build** (faster compilation):
+```bash
+make CXXFLAGS="-std=c++17 -O0 -g"
+```
+
+**Production Build** (optimized):
+```bash
+make CXXFLAGS="-std=c++17 -O3 -DNDEBUG"
+```
+
+## 🌐 Deployment
+
+### GitHub Pages
+```bash
+# Build the project
+make
+
+# Copy public folder to docs/ or gh-pages branch
+cp -r public/* docs/
+```
+
+### Netlify/Vercel
+Simply point your deployment to the `public/` folder after building.
+
+### Self-Hosted
+```bash
+# Production build
+make clean && make
+
+# Serve with any web server
+cd public
+python3 -m http.server 8080
+```
 
 ## 🐛 Troubleshooting
 
-- **"Module is not defined" error**: Make sure you're serving the files through a web server, not opening the HTML file directly
-- **Functions not found**: Ensure your C++ functions are marked with `EMSCRIPTEN_KEEPALIVE` and exported in the Makefile
-- **No console output**: Check that you have the browser's developer console open (F12)
-- **Build errors**: Verify that Emscripten is properly installed and activated (`emcc --version`)
+### Common Issues
 
-### VS Code IntelliSense Issues
+**❌ "Module is not defined"**
+- Make sure you're serving through a web server, not opening HTML directly
+- Check browser console for specific errors
 
-If VS Code shows `'emscripten.h' file not found` errors:
+**❌ "emcc: command not found"**
+```bash
+source emsdk/emsdk_env.sh
+```
 
-1. **Make sure Emscripten environment is set up**:
-   ```bash
-   source /path/to/emsdk/emsdk_env.sh
-   ```
+**❌ "raylib.h not found"**
+```bash
+cd raylib/src && make PLATFORM=PLATFORM_WEB
+```
 
-2. **Reload VS Code window**: Press `Cmd+Shift+P` (or `Ctrl+Shift+P`) and run "Developer: Reload Window"
+**❌ Build errors**
+```bash
+make clean && make
+```
 
-3. **Check C++ configuration**: The project includes `.vscode/c_cpp_properties.json` with Emscripten paths. If you installed Emscripten in a different location, update the paths accordingly.
+### IDE Issues
 
-4. **Alternative**: If the environment variable approach doesn't work, you can manually update the paths in `.vscode/c_cpp_properties.json` to point to your Emscripten installation.
+**VS Code/Cursor IntelliSense not working:**
+1. Install the clangd extension
+2. Disable C/C++ extension (conflicts with clangd)
+3. Restart the editor
 
-The code will still compile and work correctly even if VS Code shows these errors - they're just IntelliSense issues.
+**Missing autocomplete:**
+- The `.clangd` and `compile_commands.json` files provide full IDE support
+- Make sure your editor supports the Language Server Protocol
 
-## 📚 Next Steps
+## 📚 Learn More
 
-This is a basic example to get you started. You can extend it by:
+### Raylib Resources
+- [Raylib Official Site](https://www.raylib.com/)
+- [Raylib Examples](https://www.raylib.com/examples.html)
+- [Raylib API Reference](https://www.raylib.com/cheatsheet/cheatsheet.html)
 
-- Adding more complex C++ functionality
-- Implementing data structures and algorithms
-- Creating a game engine or graphics demo
-- Integrating with existing C++ libraries
-- Adding file I/O or networking capabilities
+### WebAssembly Resources
+- [Emscripten Documentation](https://emscripten.org/docs/)
+- [WebAssembly.org](https://webassembly.org/)
+- [MDN WebAssembly Guide](https://developer.mozilla.org/en-US/docs/WebAssembly)
 
-Happy coding! 🎉
+### Next Steps
+- 🎨 Add sprites and animations
+- 🎵 Implement audio with Raylib
+- 🎮 Create a simple game
+- 🔧 Add more complex C++ algorithms
+- 📱 Optimize for mobile devices
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+**Happy coding!** 🎉 If you build something cool with this template, please share it!
