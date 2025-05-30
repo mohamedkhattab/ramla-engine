@@ -3,25 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C++ WebAssembly + Raylib Demo</title>
+    <title>Ramla Engine - WebAssembly Demo</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin: 0;
             padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             min-height: 100vh;
-        }
-        
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         
         h1 {
@@ -32,117 +26,42 @@
         }
         
         .canvas-container {
-            display: flex;
-            justify-content: center;
-            margin: 30px 0;
             background: rgba(0, 0, 0, 0.3);
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10px);
         }
         
         #canvas {
             border: 2px solid #fff;
             border-radius: 8px;
             background: #000;
-        }
-        
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            margin: 30px 0;
-        }
-        
-        button {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            border: none;
-            color: white;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px 0 rgba(255, 107, 107, 0.3);
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px 0 rgba(255, 107, 107, 0.4);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        .console-info {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border-left: 4px solid #feca57;
+            display: block;
         }
         
         .status {
             text-align: center;
-            margin: 20px 0;
+            margin-top: 20px;
             font-size: 18px;
-        }
-        
-        .loading {
-            color: #feca57;
-        }
-        
-        .ready {
-            color: #26de81;
-        }
-        
-        .error {
-            color: #ff6b6b;
-        }
-        
-        input {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            margin: 0 10px;
-            font-size: 16px;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🚀 C++ WebAssembly + Raylib Demo</h1>
-        
-        <div class="status loading" id="status">
-            Loading WebAssembly module...
-        </div>
-        
-        <div class="canvas-container">
-            <canvas id="canvas" width="800" height="450"></canvas>
-        </div>
-        
-        <div class="console-info">
-            <strong>📝 Note:</strong> Open your browser's developer console (F12) to see the C++ output messages!
-            <br><strong>🎮 Graphics:</strong> The red rectangle above is rendered using Raylib in WebAssembly!
-        </div>
-        
-        <div class="button-group" id="controls" style="display: none;">
-            <button onclick="callSayHello()">Say Hello</button>
-            <button onclick="callAdd()">Add Numbers (42 + 13)</button>
-            <button onclick="callGreetCustom()">Greet Custom Name</button>
-        </div>
-        
-        <div style="text-align: center; margin-top: 20px; display: none;" id="customGreet">
-            <input type="text" id="nameInput" placeholder="Enter your name" value="WebAssembly Fan">
-            <button onclick="callGreetWithInput()">Greet Me!</button>
-        </div>
+    <h1>Ramla Engine</h1>
+    
+    <div class="canvas-container">
+        <canvas id="canvas" width="800" height="450"></canvas>
+    </div>
+    
+    <div class="status" id="status">
+        Loading WebAssembly engine...
     </div>
 
     <script>
-        let wasmReady = false;
-
-        // Configure Emscripten module before it loads
+        // Configure Emscripten module
         var Module = {
             canvas: (function() {
                 var canvas = document.getElementById('canvas');
@@ -154,64 +73,23 @@
             })(),
             
             onRuntimeInitialized: function() {
-                console.log('🎉 WebAssembly module with Raylib is ready!');
-                document.getElementById('status').textContent = '✅ WebAssembly + Raylib loaded successfully!';
-                document.getElementById('status').className = 'status ready';
-                document.getElementById('controls').style.display = 'flex';
-                document.getElementById('customGreet').style.display = 'block';
-                wasmReady = true;
+                console.log('🎉 Ramla Engine initialized successfully!');
+                document.getElementById('status').textContent = '✅ Ramla Engine WebAssembly module loaded';
             },
             
             print: function(text) {
-                console.log('C++ Output:', text);
+                console.log('Ramla Engine:', text);
             },
             
             printErr: function(text) {
-                console.error('C++ Error:', text);
+                console.error('Ramla Engine Error:', text);
             }
         };
 
-        // Functions to call C++ code
-        function callSayHello() {
-            if (!wasmReady) return;
-            console.log('🔄 Calling C++ sayHello() function...');
-            Module._sayHello();
-        }
-
-        function callAdd() {
-            if (!wasmReady) return;
-            console.log('🔄 Calling C++ add() function...');
-            const result = Module._add(42, 13);
-            console.log('📊 Result returned from C++:', result);
-        }
-
-        function callGreetCustom() {
-            if (!wasmReady) return;
-            console.log('🔄 Calling C++ greet() function...');
-            const name = "Amazing Developer";
-            const nameLength = Module.lengthBytesUTF8(name) + 1;
-            const namePtr = Module._malloc(nameLength);
-            Module.stringToUTF8(name, namePtr, nameLength);
-            Module._greet(namePtr);
-            Module._free(namePtr);
-        }
-
-        function callGreetWithInput() {
-            if (!wasmReady) return;
-            const name = document.getElementById('nameInput').value || "Anonymous";
-            console.log('🔄 Calling C++ greet() function with name:', name);
-            const nameLength = Module.lengthBytesUTF8(name) + 1;
-            const namePtr = Module._malloc(nameLength);
-            Module.stringToUTF8(name, namePtr, nameLength);
-            Module._greet(namePtr);
-            Module._free(namePtr);
-        }
-
         // Handle loading errors
         window.addEventListener('error', function(e) {
-            console.error('Error loading WebAssembly:', e);
-            document.getElementById('status').textContent = '❌ Error loading WebAssembly module';
-            document.getElementById('status').className = 'status error';
+            console.error('Error loading Ramla Engine:', e);
+            document.getElementById('status').textContent = '❌ Failed to load engine';
         });
     </script>
     

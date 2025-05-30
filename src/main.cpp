@@ -1,55 +1,30 @@
 #include <raylib.h>
 #include <emscripten.h>
-#include <iostream> // for cout
 
 const int screenWidth = 800;
 const int screenHeight = 450;
 
 // Main game loop function
 void UpdateDrawFrame() {
-    // Update
-    // Add any game logic here
-    
-    // Draw
+    // Begin drawing
     BeginDrawing();
     
-        ClearBackground(RAYWHITE);
+        // Clear background to a nice dark color
+        ClearBackground(DARKGRAY);
         
         // Draw a simple red rectangle in the center
-        DrawRectangle((screenWidth/2) - 100, (screenHeight/2) - 50, 200, 100, RED);
+        DrawRectangle(screenWidth/2 - 150, screenHeight/2 - 75, 300, 150, RED);
         
-        // Draw some text
-        DrawText("Hello, Raylib WebAssembly!", 190, 200, 20, LIGHTGRAY);
-        DrawText("Press ESC to close", 300, screenHeight - 40, 20, GRAY);
+        // Draw text inside the rectangle
+        DrawText("Ramla engine running", screenWidth/2 - 100, screenHeight/2 - 30, 20, WHITE);
+        DrawText("in raylib", screenWidth/2 - 40, screenHeight/2, 20, WHITE);
         
     EndDrawing();
 }
 
-extern "C" {
-    // Keep the original functions for backward compatibility
-    EMSCRIPTEN_KEEPALIVE
-    void sayHello() {
-        std::cout << "Hello from C++ WebAssembly with Raylib!\n";
-    }
-    
-    EMSCRIPTEN_KEEPALIVE
-    int add(int a, int b) {
-        int result = a + b;
-        std::cout << "C++ calculated: " << a << " + " << b << " = " << result << "\n";
-        return result;
-    }
-    
-    EMSCRIPTEN_KEEPALIVE
-    void greet(const char* name) {
-        std::cout << "Hello, " << name << "! Greetings from C++ with Raylib!\n";
-    }
-}
-
 int main() {
-    std::cout << "Raylib WebAssembly module loaded successfully!\n";
-    
     // Initialize raylib
-    InitWindow(screenWidth, screenHeight, "Raylib WebAssembly - Rectangle Demo");
+    InitWindow(screenWidth, screenHeight, "Ramla Engine - WebAssembly Demo");
     
     // Set the game to run at 60 FPS
     emscripten_set_main_loop(UpdateDrawFrame, 60, 1);

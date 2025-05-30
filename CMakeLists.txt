@@ -40,8 +40,8 @@ if(EMSCRIPTEN)
         -s WASM=1
         -s USE_GLFW=3
         -s ASYNCIFY
-        -s EXPORTED_RUNTIME_METHODS=['stringToUTF8','lengthBytesUTF8']
-        -s EXPORTED_FUNCTIONS=['_main','_sayHello','_add','_greet','_malloc','_free']
+        -s EXPORTED_RUNTIME_METHODS=['ccall','cwrap']
+        -s EXPORTED_FUNCTIONS=['_main']
         -s ALLOW_MEMORY_GROWTH=1
         -s MODULARIZE=0
         -s EXPORT_NAME="Module"
