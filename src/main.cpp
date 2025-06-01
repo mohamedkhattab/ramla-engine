@@ -25,7 +25,8 @@ float getScaleFactor() {
   // Use logical dimensions for UI scaling calculations
   float scaleX = (float)logicalWidth / REFERENCE_WIDTH;
   float scaleY = (float)logicalHeight / REFERENCE_HEIGHT;
-  return fminf(scaleX, scaleY);
+  // return fminf(scaleX, scaleY); // "Fit" or "Contain" - can make elements tiny
+  return fmaxf(scaleX, scaleY); // "Cover" - makes elements larger, might crop
 }
 
 // Expose functions to JavaScript to set dimensions
@@ -60,25 +61,23 @@ void UpdateDrawFrame() {
 
   Font roboto = getRobotoRegular();
 
-  // Create button using centered logical coordinates
+  // Create button using centered "point" coordinates (relative to 1920x1080 reference)
   Button btn = {
-      .x = (float)(logicalWidth - 200) /
-           2, // Center horizontally (200px button width)
-      .y = (float)(logicalHeight - 80) /
-           2,       // Center vertically (80px button height)
-      .width = 200, // 200px wide
-      .height = 80, // 80px tall
+      .x = (REFERENCE_WIDTH - 200.0f) / 2.0f,    // Centered on 1920x1080 design
+      .y = (REFERENCE_HEIGHT - 80.0f) / 2.0f,    // Centered on 1920x1080 design
+      .width = 200.0f,                          // 200 points wide
+      .height = 80.0f,                          // 80 points tall
       .backgroundColor = Colors::Button::Default,
       .textColor = Colors::Text::OnDark,
       .hoverColor = Colors::Button::DefaultHover,
       .pressedColor = Colors::Button::DefaultPressed,
       .borderColor = Colors::Border::Default,
-      .borderWidth = 2, // 2px border
-      .fontSize = 24,   // 24px font
+      .borderWidth = 2.0f,                      // 2 points border
+      .fontSize = 24,                           // 24 points font size
       .text = "Click me",
-      .borderRadius = 0.3f, // 30% roundness for nice rounded corners
-      .segments = 16,       // 16 segments for smooth curves
-      .font = &roboto,      // Use Roboto font
+      .borderRadius = 0.3f,                     // 30% roundness
+      .segments = 16,
+      .font = &roboto,
   };
 
   ButtonState btnState = button(&btn);
@@ -96,15 +95,16 @@ void UpdateDrawFrame() {
     counter++;
   }
 
-  // Draw counter text above the button
+  // Draw counter text above the button (coordinates in "points")
   Font robotoBold = getRobotoBold();
   char counterText[100];
   sprintf(counterText, "Counter: %d", counter);
-  DrawTextLogicalCentered(&robotoBold, counterText,
-                          (logicalHeight - 80) / 2 - 60, 28, WHITE);
+  // Y position for counter: center of reference screen, minus half button height, minus some padding
+  float counterTextY_points = (REFERENCE_HEIGHT - 80.0f) / 2.0f - 60.0f; 
+  DrawTextLogicalCentered(&robotoBold, counterText, counterTextY_points, 28, WHITE); // 28 points font size
 
   // Draw FPS counter in top right corner
-  drawFpsCounterEx(screenWidth, screenHeight, &roboto, getScaleFactor());
+  drawFpsCounterEx(screenWidth, screenHeight, &roboto);
 
   EndDrawing();
 }
