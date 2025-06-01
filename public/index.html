@@ -29,16 +29,62 @@
     <canvas id="canvas"></canvas>
 
     <script>
+        // Define resize function globally to avoid timing issues
+        let resizeCanvas;
+
+        function setScreenDimensions(Module, width, height) {
+            // Update C++ dimensions if the runtime is initialized and function is available
+            if (typeof Module !== 'undefined' && Module.runtimeInitialized && typeof Module._setScreenDimensions === 'function') {
+                try {
+                    Module._setScreenDimensions(width, height);
+                    console.log('Screen dimensions updated:', width, 'x', height);
+                } catch (e) {
+                    console.warn('Failed to set screen dimensions:', e);
+                }
+            }
+        }
+        
+        // Add function to set logical dimensions for UI scaling
+        function setLogicalDimensions(Module, width, height) {
+            if (typeof Module !== 'undefined' && Module.runtimeInitialized && typeof Module._setLogicalDimensions === 'function') {
+                try {
+                    Module._setLogicalDimensions(width, height);
+                    console.log('Logical dimensions updated:', width, 'x', height);
+                } catch (e) {
+                    console.warn('Failed to set logical dimensions:', e);
+                }
+            }
+        }
+        
         // Configure Emscripten module
         var Module = {
             canvas: (function() {
                 var canvas = document.getElementById('canvas');
                 
-                // Set canvas size to match viewport
-                function resizeCanvas() {
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                }
+                // Set canvas size to match viewport and update C++ dimensions
+                resizeCanvas = function() {
+                    // Get device pixel ratio for retina displays
+                    const dpr = window.devicePixelRatio || 1;
+                    
+                    // Set CSS size (logical pixels)
+                    canvas.style.width = window.innerWidth + 'px';
+                    canvas.style.height = window.innerHeight + 'px';
+                    
+                    // Set canvas size (physical pixels for crisp rendering)
+                    canvas.width = window.innerWidth * dpr;
+                    canvas.height = window.innerHeight * dpr;
+                    
+                    console.log('Canvas sizing:', {
+                        logical: `${window.innerWidth}x${window.innerHeight}`,
+                        physical: `${canvas.width}x${canvas.height}`,
+                        dpr: dpr
+                    });
+                    
+                    // Set physical dimensions for rendering buffer
+                    setScreenDimensions(Module, canvas.width, canvas.height);
+                    // Set logical dimensions for UI scaling calculations
+                    setLogicalDimensions(Module, window.innerWidth, window.innerHeight);
+                };
                 
                 // Initial resize
                 resizeCanvas();
@@ -56,6 +102,31 @@
             
             onRuntimeInitialized: function() {
                 console.log('Ramla Engine initialized');
+                Module.runtimeInitialized = true;
+                
+                // Use the same logic as resizeCanvas to set initial dimensions
+                const dpr = window.devicePixelRatio || 1;
+                const physicalWidth = window.innerWidth * dpr;
+                const physicalHeight = window.innerHeight * dpr;
+                
+                // Set both physical and logical dimensions
+                if (typeof Module._setScreenDimensions === 'function') {
+                    try {
+                        Module._setScreenDimensions(physicalWidth, physicalHeight);
+                        console.log('Initial physical dimensions set:', physicalWidth, 'x', physicalHeight, 'DPR:', dpr);
+                    } catch (e) {
+                        console.warn('Failed to set physical screen dimensions:', e);
+                    }
+                }
+                
+                if (typeof Module._setLogicalDimensions === 'function') {
+                    try {
+                        Module._setLogicalDimensions(window.innerWidth, window.innerHeight);
+                        console.log('Initial logical dimensions set:', window.innerWidth, 'x', window.innerHeight);
+                    } catch (e) {
+                        console.warn('Failed to set logical dimensions:', e);
+                    }
+                }
             },
             
             print: function(text) {
@@ -70,7 +141,6 @@
         // Handle loading errors
         window.addEventListener('error', function(e) {
             console.error('Error loading Ramla Engine:', e);
-            document.getElementById('status').textContent = '❌ Failed to load engine';
         });
     </script>
     
