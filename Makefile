@@ -141,4 +141,4 @@ help:
 	@echo "  watch      - Build, serve, and watch for file changes (auto-rebuild)"
 	@echo "  help       - Show this help message"
 
-.PHONY: all clean clean-all serve serve-node help 
+.PHONY: all clean clean-all serve serve-node help
