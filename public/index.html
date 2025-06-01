@@ -3,78 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ramla Engine - WebAssembly Demo</title>
+    <title>Ramla Engine</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        * {
             margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            padding: 0;
+            box-sizing: border-box;
         }
         
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .canvas-container {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            backdrop-filter: blur(10px);
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
         
         #canvas {
-            border: 2px solid #fff;
-            border-radius: 8px;
-            background: #000;
+            width: 100vw;
+            height: 100vh;
             display: block;
-        }
-        
-        .status {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 18px;
-            opacity: 0.8;
+            background: #000;
         }
     </style>
 </head>
 <body>
-    <h1>Ramla Engine</h1>
-    
-    <div class="canvas-container">
-        <canvas id="canvas" width="800" height="450"></canvas>
-    </div>
-    
-    <div class="status" id="status">
-        Loading WebAssembly engine...
-    </div>
+    <canvas id="canvas"></canvas>
 
     <script>
         // Configure Emscripten module
         var Module = {
             canvas: (function() {
                 var canvas = document.getElementById('canvas');
+                
+                // Set canvas size to match viewport
+                function resizeCanvas() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+                
+                // Initial resize
+                resizeCanvas();
+                
+                // Handle window resize
+                window.addEventListener('resize', resizeCanvas);
+                
                 canvas.addEventListener("webglcontextlost", function(e) { 
                     alert('WebGL context lost. You will need to reload the page.'); 
                     e.preventDefault(); 
                 }, false);
+                
                 return canvas;
             })(),
             
             onRuntimeInitialized: function() {
-                console.log('🎉 Ramla Engine initialized successfully!');
-                document.getElementById('status').textContent = '✅ Ramla Engine WebAssembly module loaded';
+                console.log('Ramla Engine initialized');
             },
             
             print: function(text) {
