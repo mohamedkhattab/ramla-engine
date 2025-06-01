@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <emscripten.h>
 #include <raylib.h>
+#include <raymath.h>
 
 // Screen dimensions - will be set by JavaScript
 int screenWidth = 1920;

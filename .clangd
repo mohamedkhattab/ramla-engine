@@ -15,6 +15,7 @@ CompileFlags:
     - "-DEMSCRIPTEN"
     - "-std=c++17"
     - "-target"
+    - "-ferror-limit=0"
     - "wasm32-unknown-emscripten"
     - "-fignore-exceptions"
   Remove:
