@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <cmath>
 
 struct Button {
   float x;
@@ -9,6 +10,8 @@ struct Button {
   Color textColor;
   Color hoverColor;
   Color pressedColor;
+  Color borderColor;       // Border color
+  float borderWidth;       // Border thickness (0.0f = no border)
   int fontSize;
   const char *text;
   float borderRadius;    // 0.0f = no rounding, 1.0f = fully rounded
@@ -31,6 +34,28 @@ bool isButtonHovered(Button *btn) {
   return isPointInsideButton(btn, GetMousePosition());
 }
 
+// Helper function to adjust color brightness (factor < 1.0 = darker, factor > 1.0 = lighter)
+Color adjustColor(Color color, float factor) {
+  Color newColor = color;
+
+  if (newColor.r * factor > 255) {
+    newColor.r = 255;
+  }
+  if (newColor.g * factor > 255) {
+    newColor.g = 255;
+  }
+  if (newColor.b * factor > 255) {
+    newColor.b = 255;
+  }
+
+  newColor.r = (unsigned char)(newColor.r * factor);
+  newColor.g = (unsigned char)(newColor.g * factor);
+  newColor.b = (unsigned char)(newColor.b * factor);
+  newColor.a = color.a;
+
+  return newColor;
+}
+
 ButtonState button(Button *btn) {
   ButtonState state = {
     .hovered = isButtonHovered(btn),
@@ -40,13 +65,37 @@ ButtonState button(Button *btn) {
   
   // Determine the current color based on state
   Color currentColor = btn->backgroundColor;
+  Color currentBorderColor = btn->borderColor;
+  
   if (state.pressed) {
     currentColor = btn->pressedColor;
+    // Make border darker when pressed for "inset" effect
+    currentBorderColor = adjustColor(btn->pressedColor, 0.6f);
   } else if (state.hovered) {
     currentColor = btn->hoverColor;
+    // Slightly darker border on hover
+    currentBorderColor = adjustColor(btn->hoverColor, 0.8f);
   }
   
-  // Draw the button with the appropriate color
+  // Draw the border first (if border width > 0)
+  if (btn->borderWidth > 0.0f) {
+    Rectangle borderRect = { 
+      btn->x - btn->borderWidth, 
+      btn->y - btn->borderWidth, 
+      btn->width + (btn->borderWidth * 2), 
+      btn->height + (btn->borderWidth * 2) 
+    };
+    
+    if (btn->borderRadius > 0.0f) {
+      // Draw rounded border
+      DrawRectangleRounded(borderRect, btn->borderRadius, btn->segments, currentBorderColor);
+    } else {
+      // Draw regular border
+      DrawRectangle(borderRect.x, borderRect.y, borderRect.width, borderRect.height, currentBorderColor);
+    }
+  }
+  
+  // Draw the main button
   Rectangle buttonRect = { btn->x, btn->y, btn->width, btn->height };
   
   if (btn->borderRadius > 0.0f) {

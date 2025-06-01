@@ -72,4 +72,15 @@ namespace Colors {
     constexpr Color Gray800 = {66, 66, 66, 255};
     constexpr Color Gray900 = {33, 33, 33, 255};
   }
+
+  // Border colors - darker shades for control aesthetics
+  namespace Border {
+    constexpr Color Default = {50, 90, 130, 255};        // Darker shade of steel blue
+    constexpr Color Success = {56, 120, 60, 255};        // Darker shade of success green
+    constexpr Color Warning = {220, 108, 0, 255};        // Darker shade of warning orange  
+    constexpr Color Danger = {180, 40, 40, 255};         // Darker shade of danger red
+    constexpr Color Light = Gray::Gray300;               // Light gray border
+    constexpr Color Medium = Gray::Gray500;              // Medium gray border
+    constexpr Color Dark = Gray::Gray700;                // Dark gray border
+  }
 }

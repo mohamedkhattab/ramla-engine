@@ -8,7 +8,7 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#define FPS 60
+#define FPS 0
 
 // Screen dimensions - will be set by JavaScript
 int screenWidth = 1920;
@@ -37,6 +37,8 @@ void UpdateDrawFrame() {
       .textColor = Colors::Text::OnDark,
       .hoverColor = Colors::Button::DefaultHover,
       .pressedColor = Colors::Button::DefaultPressed,
+      .borderColor = Colors::Border::Default,
+      .borderWidth = 2.0f,                         // 2px border for subtle definition
       .fontSize = 24,
       .text = "Click me",
       .borderRadius = 0.3f,  // 30% roundness for nice rounded corners
