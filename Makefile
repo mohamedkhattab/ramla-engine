@@ -26,7 +26,8 @@ EMFLAGS = -s WASM=1 \
           -s EXPORTED_FUNCTIONS='["_main"]' \
           -s ALLOW_MEMORY_GROWTH=1 \
           -s MODULARIZE=0 \
-          -s EXPORT_NAME="Module"
+          -s EXPORT_NAME="Module" \
+          --embed-file assets/fonts
 
 # Default target
 all: $(JS_OUTPUT) compile_commands.json

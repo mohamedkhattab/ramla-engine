@@ -1,4 +1,5 @@
 #include "Elements/button.cpp"
+#include "font_manager.cpp"
 #include <emscripten.h>
 #include <raylib.h>
 
@@ -16,6 +17,8 @@ void UpdateDrawFrame() {
   // Clear background to a nice dark color
   ClearBackground(BLACK);
 
+  Font roboto = getRobotoRegular();
+  
   Button btn = {
       .x = screenWidth / 2 - 100.0f,
       .y = screenHeight / 2 - 50.0f,
@@ -25,10 +28,11 @@ void UpdateDrawFrame() {
       .textColor = WHITE,
       .hoverColor = GREEN,
       .pressedColor = BLUE,
-      .fontSize = 20,
+      .fontSize = 24,
       .text = "Click me",
       .borderRadius = 0.3f,  // 30% roundness for nice rounded corners
-      .segments = 16,     // 16 segments for smooth curves
+      .segments = 16,        // 16 segments for smooth curves
+      .font = &roboto,       // Use Roboto font
   };
 
   if (button(&btn)) {
@@ -36,8 +40,11 @@ void UpdateDrawFrame() {
   }
 
   if (wasButtonClicked) {
-    DrawText("Button was clicked!", screenWidth / 2 - 100.0f,
-             screenHeight / 2 - 150.0f, 20.0f, WHITE);
+    // Use Roboto Bold for the clicked message
+    Font robotoBold = getRobotoBold();
+    DrawTextEx(robotoBold, "Button was clicked!", 
+               (Vector2){screenWidth / 2 - 120.0f, screenHeight / 2 - 150.0f}, 
+               28, 0.0f, WHITE);
   }
 
   EndDrawing();
@@ -46,9 +53,15 @@ void UpdateDrawFrame() {
 int main() {
   // Initialize raylib - the canvas size will be handled by JavaScript
   InitWindow(screenWidth, screenHeight, "Ramla Engine");
+  
+  // Initialize fonts
+  initFonts();
 
   // Set the game to run at 60 FPS
   emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
+  
+  // Clean up fonts (this won't actually be called in browser, but good practice)
+  unloadFonts();
 
   return 0;
 }

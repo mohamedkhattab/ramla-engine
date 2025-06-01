@@ -12,7 +12,8 @@ struct Button {
   int fontSize;
   const char *text;
   float borderRadius;    // 0.0f = no rounding, 1.0f = fully rounded
-  int segments;       // Number of segments for rounded corners (16 is good default)
+  int segments;          // Number of segments for rounded corners (16 is good default)
+  Font *font;            // Pointer to font (nullptr = use default font)
 };
 
 bool isPointInsideButton(Button *btn, Vector2 point) {
@@ -48,7 +49,26 @@ bool button(Button *btn) {
     DrawRectangle(btn->x, btn->y, btn->width, btn->height, currentColor);
   }
   
-  DrawText(btn->text, btn->x + 10, btn->y + 10, btn->fontSize, btn->textColor);
+  // Calculate text positioning for center alignment
+  Vector2 textSize;
+  float spacing = 0.0f; // Better spacing for custom fonts
+  
+  if (btn->font != nullptr) {
+    textSize = MeasureTextEx(*btn->font, btn->text, btn->fontSize, spacing);
+  } else {
+    textSize.x = MeasureText(btn->text, btn->fontSize);
+    textSize.y = btn->fontSize;
+  }
+  
+  float textX = btn->x + (btn->width - textSize.x) / 2;
+  float textY = btn->y + (btn->height - textSize.y) / 2;
+  
+  // Draw text with custom font or default font
+  if (btn->font != nullptr) {
+    DrawTextEx(*btn->font, btn->text, (Vector2){textX, textY}, btn->fontSize, spacing, btn->textColor);
+  } else {
+    DrawText(btn->text, textX, textY, btn->fontSize, btn->textColor);
+  }
   
   return clicked;
 }
