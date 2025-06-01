@@ -27,6 +27,8 @@ void UpdateDrawFrame() {
       .pressedColor = BLUE,
       .fontSize = 20,
       .text = "Click me",
+      .borderRadius = 0.3f,  // 30% roundness for nice rounded corners
+      .segments = 16,     // 16 segments for smooth curves
   };
 
   if (button(&btn)) {

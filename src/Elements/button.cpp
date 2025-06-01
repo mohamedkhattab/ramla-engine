@@ -11,6 +11,8 @@ struct Button {
   Color pressedColor;
   int fontSize;
   const char *text;
+  float borderRadius;    // 0.0f = no rounding, 1.0f = fully rounded
+  int segments;       // Number of segments for rounded corners (16 is good default)
 };
 
 bool isPointInsideButton(Button *btn, Vector2 point) {
@@ -36,7 +38,16 @@ bool button(Button *btn) {
   }
   
   // Draw the button with the appropriate color
-  DrawRectangle(btn->x, btn->y, btn->width, btn->height, currentColor);
+  Rectangle buttonRect = { btn->x, btn->y, btn->width, btn->height };
+  
+  if (btn->borderRadius > 0.0f) {
+    // Draw rounded rectangle
+    DrawRectangleRounded(buttonRect, btn->borderRadius, btn->segments, currentColor);
+  } else {
+    // Draw regular rectangle
+    DrawRectangle(btn->x, btn->y, btn->width, btn->height, currentColor);
+  }
+  
   DrawText(btn->text, btn->x + 10, btn->y + 10, btn->fontSize, btn->textColor);
   
   return clicked;
