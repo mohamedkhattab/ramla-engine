@@ -2,6 +2,7 @@
 #include "font_manager.cpp"
 #include "utils/colors.cpp"
 #include "utils/fps_counter.cpp"
+#include "utils/cursor.cpp"
 #include <cstdio>
 #include <emscripten.h>
 #include <raylib.h>
@@ -12,6 +13,7 @@
 // Screen dimensions - will be set by JavaScript
 int screenWidth = 1920;
 int screenHeight = 1080;
+CursorType cursorType = CursorType::Default;
 
 int counter = 0;
 
@@ -22,6 +24,7 @@ void UpdateDrawFrame() {
 
   // Clear background to a nice dark color
   ClearBackground(BLACK);
+  setCursor(cursorType);
 
   Font roboto = getRobotoRegular();
   
@@ -41,7 +44,14 @@ void UpdateDrawFrame() {
       .font = &roboto,       // Use Roboto font
   };
 
-  if (button(&btn)) {
+  ButtonState btnState = button(&btn);
+
+  // Set cursor based on button state
+  if (btnState.hovered) {
+    cursorType = CursorType::Pointer;
+  }
+
+  if (btnState.clicked) {
     counter++;
   }
 
@@ -50,7 +60,7 @@ void UpdateDrawFrame() {
   char counterText[100];
   sprintf(counterText, "Counter: %d", counter);
   DrawTextEx(robotoBold, counterText,
-             (Vector2){screenWidth / 2 - 120.0f, screenHeight / 2 - 150.0f}, 
+             (Vector2){screenWidth / 2 - 100.0f, screenHeight / 2 - 150.0f}, 
              28, 0.0f, WHITE);
 
   // Draw FPS counter in top right corner

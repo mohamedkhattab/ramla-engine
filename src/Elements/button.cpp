@@ -16,6 +16,12 @@ struct Button {
   Font *font;            // Pointer to font (nullptr = use default font)
 };
 
+struct ButtonState {
+  bool hovered;
+  bool pressed;
+  bool clicked;
+};
+
 bool isPointInsideButton(Button *btn, Vector2 point) {
   return point.x >= btn->x && point.x <= btn->x + btn->width &&
          point.y >= btn->y && point.y <= btn->y + btn->height;
@@ -25,16 +31,18 @@ bool isButtonHovered(Button *btn) {
   return isPointInsideButton(btn, GetMousePosition());
 }
 
-bool button(Button *btn) {
-  bool hovered = isButtonHovered(btn);
-  bool pressed = hovered && IsMouseButtonDown(MOUSE_BUTTON_LEFT);
-  bool clicked = hovered && IsMouseButtonReleased(MOUSE_BUTTON_LEFT);
+ButtonState button(Button *btn) {
+  ButtonState state = {
+    .hovered = isButtonHovered(btn),
+    .pressed = state.hovered && IsMouseButtonDown(MOUSE_BUTTON_LEFT),
+    .clicked = state.hovered && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)
+  };
   
   // Determine the current color based on state
   Color currentColor = btn->backgroundColor;
-  if (pressed) {
+  if (state.pressed) {
     currentColor = btn->pressedColor;
-  } else if (hovered) {
+  } else if (state.hovered) {
     currentColor = btn->hoverColor;
   }
   
@@ -70,5 +78,5 @@ bool button(Button *btn) {
     DrawText(btn->text, textX, textY, btn->fontSize, btn->textColor);
   }
   
-  return clicked;
+  return state;
 }
