@@ -1,5 +1,6 @@
 #include "Elements/button.cpp"
 #include "font_manager.cpp"
+#include <cstdio>
 #include <emscripten.h>
 #include <raylib.h>
 
@@ -7,7 +8,7 @@
 int screenWidth = 1920;
 int screenHeight = 1080;
 
-bool wasButtonClicked = false;
+int counter = 0;
 
 // Main game loop function
 void UpdateDrawFrame() {
@@ -36,16 +37,16 @@ void UpdateDrawFrame() {
   };
 
   if (button(&btn)) {
-    wasButtonClicked = true;
+    counter++;
   }
 
-  if (wasButtonClicked) {
-    // Use Roboto Bold for the clicked message
-    Font robotoBold = getRobotoBold();
-    DrawTextEx(robotoBold, "Button was clicked!", 
-               (Vector2){screenWidth / 2 - 120.0f, screenHeight / 2 - 150.0f}, 
-               28, 0.0f, WHITE);
-  }
+  // Use Roboto Bold for the clicked message
+  Font robotoBold = getRobotoBold();
+  char counterText[100];
+  sprintf(counterText, "Counter: %d", counter);
+  DrawTextEx(robotoBold, counterText,
+             (Vector2){screenWidth / 2 - 120.0f, screenHeight / 2 - 150.0f}, 
+             28, 0.0f, WHITE);
 
   EndDrawing();
 }
