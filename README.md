@@ -123,6 +123,7 @@ ramla-engine/
 | `make clean` | Remove build artifacts |
 | `make serve` | Build and serve locally (Python) |
 | `make serve-node` | Build and serve locally (Node.js) |
+| `make watch` | 🚀 **Development mode** - Build, serve, and auto-rebuild on file changes with animated feedback |
 | `make help` | Show all available commands |
 
 ## Architecture
@@ -152,6 +153,10 @@ The current implementation demonstrates the foundation:
 - Performance profiling tools
 
 ## Development
+
+```bash
+make watch
+```
 
 ### IDE Setup
 
