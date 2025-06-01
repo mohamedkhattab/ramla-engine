@@ -1,3 +1,4 @@
+#pragma once
 #include <raylib.h>
 
 // Primary color palette - main brand colors

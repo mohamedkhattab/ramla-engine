@@ -1,10 +1,13 @@
 #include "Elements/button.cpp"
 #include "font_manager.cpp"
 #include "utils/colors.cpp"
+#include "utils/fps_counter.cpp"
 #include <cstdio>
 #include <emscripten.h>
 #include <raylib.h>
 #include <raymath.h>
+
+#define FPS 60
 
 // Screen dimensions - will be set by JavaScript
 int screenWidth = 1920;
@@ -50,6 +53,9 @@ void UpdateDrawFrame() {
              (Vector2){screenWidth / 2 - 120.0f, screenHeight / 2 - 150.0f}, 
              28, 0.0f, WHITE);
 
+  // Draw FPS counter in top right corner
+  drawFpsCounterEx(screenWidth, screenHeight, &roboto);
+
   EndDrawing();
 }
 
@@ -61,7 +67,7 @@ int main() {
   initFonts();
 
   // Set the game to run at 60 FPS
-  emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
+  emscripten_set_main_loop(UpdateDrawFrame, FPS, 1);
   
   // Clean up fonts (this won't actually be called in browser, but good practice)
   unloadFonts();
