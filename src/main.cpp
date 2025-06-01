@@ -1,5 +1,6 @@
 #include "Elements/button.cpp"
 #include "font_manager.cpp"
+#include "utils/colors.cpp"
 #include <cstdio>
 #include <emscripten.h>
 #include <raylib.h>
@@ -26,10 +27,10 @@ void UpdateDrawFrame() {
       .y = screenHeight / 2 - 50.0f,
       .width = 200.0f,
       .height = 100.0f,
-      .backgroundColor = RED,
-      .textColor = WHITE,
-      .hoverColor = GREEN,
-      .pressedColor = BLUE,
+      .backgroundColor = Colors::Button::Default,
+      .textColor = Colors::Text::OnDark,
+      .hoverColor = Colors::Button::DefaultHover,
+      .pressedColor = Colors::Button::DefaultPressed,
       .fontSize = 24,
       .text = "Click me",
       .borderRadius = 0.3f,  // 30% roundness for nice rounded corners
