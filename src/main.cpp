@@ -62,26 +62,8 @@ void UpdateDrawFrame() {
 
   Font roboto = getRobotoRegular();
 
-  // Create button using centered "point" coordinates (relative to 1920x1080 reference)
-  Button btn = {
-      .x = (REFERENCE_WIDTH - 300.0f) / 2.0f,    // Centered on 1920x1080 design
-      .y = (REFERENCE_HEIGHT - 120.0f) / 2.0f,   // Centered on 1920x1080 design
-      .width = 300.0f,                          // 300 points wide (larger)
-      .height = 120.0f,                         // 120 points tall (larger)
-      .backgroundColor = Colors::Button::Default,
-      .textColor = Colors::Text::OnDark,
-      .hoverColor = Colors::Button::DefaultHover,
-      .pressedColor = Colors::Button::DefaultPressed,
-      .borderColor = Colors::Border::Default,
-      .borderWidth = 2.0f,                      // 2 points border
-      .fontSize = 56,                           // 28 points font size (larger)
-      .text = "Click me",
-      .borderRadius = 0.3f,                     // 30% roundness
-      .segments = 16,
-      .font = &roboto,
-  };
-
-  ButtonState btnState = button(&btn);
+  // Draw button using Lua instead of hardcoded C++
+  ButtonState btnState = callLuaButtonFunction("drawTestButton");
 
   // Set cursor based on button state
   if (btnState.hovered) {
