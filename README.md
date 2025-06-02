@@ -19,10 +19,12 @@ This architecture enables fluid 60+ FPS interfaces, real-time data visualization
 
 - **Immediate Mode UI**: Direct pixel manipulation without DOM overhead
 - **WebAssembly Performance**: High-performance C++ code running in browsers
+- **Embedded Lua Scripting**: High-level UI logic with Lua integration (compiled as C++ for simplicity)
 - **Custom DSL Mapping**: Declarative UI syntax compiled to draw calls
 - **Cross-Platform**: Runs on any modern browser supporting WebAssembly
 - **Modern Tooling**: Full IDE support with clangd configuration
 - **Responsive**: Hardware-accelerated rendering on desktop and mobile
+- **Simplified Build**: Single C++ compiler for all components
 
 ## Quick Start
 
@@ -105,6 +107,7 @@ ramla-engine/
 │   └── main.cpp              # Core immediate mode rendering logic
 ├── public/
 │   └── index.html            # WebGL canvas container
+├── lua/                      # Lua scripting engine (submodule)
 ├── emsdk/                    # Emscripten SDK (auto-installed)
 ├── raylib/                   # Raylib graphics library (auto-installed)
 ├── .clangd                   # IDE configuration for syntax highlighting
@@ -130,11 +133,12 @@ ramla-engine/
 
 ### Immediate Mode Rendering Pipeline
 
-1. **DSL Input**: High-level UI description (planned)
-2. **Compilation**: DSL transforms to optimized draw commands
-3. **WebAssembly Execution**: C++ rendering logic runs in browser
-4. **Raylib Backend**: Hardware-accelerated graphics calls
-5. **Canvas Output**: Direct pixel manipulation via WebGL
+1. **Lua Scripting**: High-level UI logic and component definitions
+2. **DSL Input**: High-level UI description (planned)
+3. **Compilation**: DSL transforms to optimized draw commands
+4. **WebAssembly Execution**: C++ rendering logic runs in browser
+5. **Raylib Backend**: Hardware-accelerated graphics calls
+6. **Canvas Output**: Direct pixel manipulation via WebGL
 
 ### Current Demo
 
@@ -146,6 +150,7 @@ The current implementation demonstrates the foundation:
 
 ### Planned Features
 
+- Lua-based UI scripting and component system
 - Custom DSL parser and compiler
 - Layout management system
 - Event handling for interactive UIs

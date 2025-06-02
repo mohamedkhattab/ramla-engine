@@ -3,6 +3,11 @@
 #include <raylib.h>
 #include <raymath.h>
 
+// Lua integration - no extern "C" needed since everything is C++
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+
 // Include cursor types first for CursorType enum
 #include "utils/cursor.cpp"
 
@@ -15,6 +20,9 @@ int logicalWidth = 800; // Logical pixels for UI scaling
 int logicalHeight = 600;
 CursorType cursorType = CursorType::Default;
 int counter = 0;
+
+// Lua state
+lua_State* L = nullptr;
 
 // Reference resolution for design (similar to CSS reference pixel)
 const float REFERENCE_WIDTH = 1920.0f;
@@ -50,6 +58,37 @@ void setLogicalDimensions(int width, int height) {
 #include "utils/colors.cpp"
 #include "utils/fps_counter.cpp"
 #include "utils/text_utils.cpp"
+
+// Initialize Lua
+void initLua() {
+    L = luaL_newstate();
+    luaL_openlibs(L);
+    
+    // Test Lua is working
+    const char* test_script = R"(
+        function getWelcomeMessage()
+            return "Hello from Lua!"
+        end
+        
+        function multiply(a, b)
+            return a * b
+        end
+    )";
+    
+    int result = luaL_dostring(L, test_script);
+    if (result != LUA_OK) {
+        printf("Lua error: %s\n", lua_tostring(L, -1));
+        lua_pop(L, 1);
+    }
+}
+
+// Clean up Lua
+void cleanupLua() {
+    if (L) {
+        lua_close(L);
+        L = nullptr;
+    }
+}
 
 // Main game loop function
 void UpdateDrawFrame() {
@@ -103,6 +142,30 @@ void UpdateDrawFrame() {
   float counterTextY_points = (REFERENCE_HEIGHT - 120.0f) / 2.0f - 80.0f; 
   DrawTextLogicalCentered(&robotoBold, counterText, counterTextY_points, 56, WHITE); // 56 points font size
 
+  // Test Lua integration - call Lua function and display result
+  if (L) {
+    lua_getglobal(L, "getWelcomeMessage");
+    if (lua_pcall(L, 0, 1, 0) == LUA_OK) {
+      const char* message = lua_tostring(L, -1);
+      float luaTextY_points = counterTextY_points - 80.0f;
+      DrawTextLogicalCentered(&robotoBold, message, luaTextY_points, 32, YELLOW);
+      lua_pop(L, 1); // Remove result from stack
+    }
+    
+    // Test Lua math function
+    lua_getglobal(L, "multiply");
+    lua_pushnumber(L, counter);
+    lua_pushnumber(L, 2);
+    if (lua_pcall(L, 2, 1, 0) == LUA_OK) {
+      double result = lua_tonumber(L, -1);
+      char mathText[100];
+      sprintf(mathText, "Counter * 2 = %.0f", result);
+      float mathTextY_points = counterTextY_points - 120.0f;
+      DrawTextLogicalCentered(&robotoBold, mathText, mathTextY_points, 28, GREEN);
+      lua_pop(L, 1); // Remove result from stack
+    }
+  }
+
   // Draw FPS counter in top right corner
   drawFpsCounterEx(screenWidth, screenHeight, &roboto);
 
@@ -116,12 +179,18 @@ int main() {
   // Initialize fonts
   initFonts();
 
+  // Initialize Lua
+  initLua();
+
   // Set the game to run at 60 FPS
   emscripten_set_main_loop(UpdateDrawFrame, FPS, 1);
 
   // Clean up fonts (this won't actually be called in browser, but good
   // practice)
   unloadFonts();
+  
+  // Clean up Lua
+  cleanupLua();
 
   return 0;
 }

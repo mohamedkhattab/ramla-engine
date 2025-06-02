@@ -6,6 +6,69 @@ project(RamlaEngine LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Build Lua library
+set(LUA_SOURCE_DIR "${CMAKE_SOURCE_DIR}/lua")
+
+# Lua source files (core library)
+set(LUA_CORE_SOURCES
+    ${LUA_SOURCE_DIR}/lapi.cpp
+    ${LUA_SOURCE_DIR}/lcode.cpp
+    ${LUA_SOURCE_DIR}/lctype.cpp
+    ${LUA_SOURCE_DIR}/ldebug.cpp
+    ${LUA_SOURCE_DIR}/ldo.cpp
+    ${LUA_SOURCE_DIR}/ldump.cpp
+    ${LUA_SOURCE_DIR}/lfunc.cpp
+    ${LUA_SOURCE_DIR}/lgc.cpp
+    ${LUA_SOURCE_DIR}/llex.cpp
+    ${LUA_SOURCE_DIR}/lmem.cpp
+    ${LUA_SOURCE_DIR}/lobject.cpp
+    ${LUA_SOURCE_DIR}/lopcodes.cpp
+    ${LUA_SOURCE_DIR}/lparser.cpp
+    ${LUA_SOURCE_DIR}/lstate.cpp
+    ${LUA_SOURCE_DIR}/lstring.cpp
+    ${LUA_SOURCE_DIR}/ltable.cpp
+    ${LUA_SOURCE_DIR}/ltm.cpp
+    ${LUA_SOURCE_DIR}/lundump.cpp
+    ${LUA_SOURCE_DIR}/lvm.cpp
+    ${LUA_SOURCE_DIR}/lzio.cpp
+)
+
+# Lua library sources (standard library)
+set(LUA_LIB_SOURCES
+    ${LUA_SOURCE_DIR}/lauxlib.cpp
+    ${LUA_SOURCE_DIR}/lbaselib.cpp
+    ${LUA_SOURCE_DIR}/lcorolib.cpp
+    ${LUA_SOURCE_DIR}/ldblib.cpp
+    ${LUA_SOURCE_DIR}/liolib.cpp
+    ${LUA_SOURCE_DIR}/lmathlib.cpp
+    ${LUA_SOURCE_DIR}/loslib.cpp
+    ${LUA_SOURCE_DIR}/lstrlib.cpp
+    ${LUA_SOURCE_DIR}/ltablib.cpp
+    ${LUA_SOURCE_DIR}/lutf8lib.cpp
+    ${LUA_SOURCE_DIR}/loadlib.cpp
+    ${LUA_SOURCE_DIR}/linit.cpp
+)
+
+# Create Lua library
+add_library(lua STATIC ${LUA_CORE_SOURCES} ${LUA_LIB_SOURCES})
+target_include_directories(lua PUBLIC ${LUA_SOURCE_DIR})
+
+# Platform-specific Lua configuration
+if(EMSCRIPTEN)
+    # Emscripten-specific Lua settings
+    target_compile_definitions(lua PRIVATE LUA_USE_POSIX)
+else()
+    # Native platform Lua settings
+    if(UNIX AND NOT APPLE)
+        target_compile_definitions(lua PRIVATE LUA_USE_LINUX)
+        target_link_libraries(lua PRIVATE dl)
+    elseif(APPLE)
+        target_compile_definitions(lua PRIVATE LUA_USE_MACOSX)
+    elseif(WIN32)
+        target_compile_definitions(lua PRIVATE LUA_USE_WINDOWS)
+    endif()
+endif()
+
 # Check if we're building for WebAssembly
 if(EMSCRIPTEN)
     message(STATUS "Building for WebAssembly with Emscripten")
@@ -90,7 +153,7 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Link libraries
 if(TARGET raylib)
-    target_link_libraries(${PROJECT_NAME} raylib)
+    target_link_libraries(${PROJECT_NAME} raylib lua)
     
     if(NOT EMSCRIPTEN)
         # For native builds, also link system libraries that raylib needs
@@ -101,6 +164,8 @@ if(TARGET raylib)
         endif()
     endif()
 else()
+    # Even if raylib is not available, still link Lua
+    target_link_libraries(${PROJECT_NAME} lua)
     message(WARNING "Raylib target not available")
 endif()
 

@@ -1,7 +1,7 @@
 [
   {
-    "directory": "$HOME/ramla-engine",
-    "command": "em++ -std=c++17 -O2 -Iraylib/src --sysroot=./emsdk/upstream/emscripten/cache/sysroot -D__EMSCRIPTEN__=1 -DPLATFORM_WEB=1 -DGRAPHICS_API_OPENGL_ES2=1 -DEMSCRIPTEN src/main.cpp",
+    "directory": "/Users/mohamed/code/ramla-engine",
+    "command": "em++ -std=c++17 -O2 -Iraylib/src -Ilua -DLUA_USE_POSIX --sysroot=./emsdk/upstream/emscripten/cache/sysroot -D__EMSCRIPTEN__=1 -DPLATFORM_WEB=1 -DGRAPHICS_API_OPENGL_ES2=1 -DEMSCRIPTEN -Ilua src/main.cpp",
     "file": "src/main.cpp"
   }
 ]

@@ -8,6 +8,20 @@ SRC_DIR = src
 BUILD_DIR = public
 SRC_FILES = $(SRC_DIR)/main.cpp
 
+# Lua
+LUA_DIR = lua
+LUA_SOURCES = $(LUA_DIR)/lapi.cpp $(LUA_DIR)/lcode.cpp $(LUA_DIR)/lctype.cpp \
+              $(LUA_DIR)/ldebug.cpp $(LUA_DIR)/ldo.cpp $(LUA_DIR)/ldump.cpp \
+              $(LUA_DIR)/lfunc.cpp $(LUA_DIR)/lgc.cpp $(LUA_DIR)/llex.cpp \
+              $(LUA_DIR)/lmem.cpp $(LUA_DIR)/lobject.cpp $(LUA_DIR)/lopcodes.cpp \
+              $(LUA_DIR)/lparser.cpp $(LUA_DIR)/lstate.cpp $(LUA_DIR)/lstring.cpp \
+              $(LUA_DIR)/ltable.cpp $(LUA_DIR)/ltm.cpp $(LUA_DIR)/lundump.cpp \
+              $(LUA_DIR)/lvm.cpp $(LUA_DIR)/lzio.cpp $(LUA_DIR)/lauxlib.cpp \
+              $(LUA_DIR)/lbaselib.cpp $(LUA_DIR)/lcorolib.cpp $(LUA_DIR)/ldblib.cpp \
+              $(LUA_DIR)/liolib.cpp $(LUA_DIR)/lmathlib.cpp $(LUA_DIR)/loslib.cpp \
+              $(LUA_DIR)/lstrlib.cpp $(LUA_DIR)/ltablib.cpp $(LUA_DIR)/lutf8lib.cpp \
+              $(LUA_DIR)/loadlib.cpp $(LUA_DIR)/linit.cpp
+
 # Raylib
 RAYLIB_DIR = raylib/src
 RAYLIB_LIB = $(RAYLIB_DIR)/libraylib.web.a
@@ -17,8 +31,8 @@ OUTPUT = $(BUILD_DIR)/main
 WASM_OUTPUT = $(OUTPUT).wasm
 JS_OUTPUT = $(OUTPUT).js
 
-# Compiler flags
-CXXFLAGS = -std=c++17 -O2 -I$(RAYLIB_DIR)
+# Compiler flags - compile everything as C++
+CXXFLAGS = -std=c++17 -O2 -I$(RAYLIB_DIR) -I$(LUA_DIR) -DLUA_USE_POSIX
 EMFLAGS = -s WASM=1 \
           -s USE_GLFW=3 \
           -s ASYNCIFY \
@@ -32,16 +46,16 @@ EMFLAGS = -s WASM=1 \
 # Default target
 all: $(JS_OUTPUT) compile_commands.json
 
-# Build the WebAssembly module
-$(JS_OUTPUT): $(SRC_FILES) $(RAYLIB_LIB) | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(EMFLAGS) $(SRC_FILES) $(RAYLIB_LIB) -o $(OUTPUT).js
+# Build the WebAssembly module - compile everything as C++
+$(JS_OUTPUT): $(SRC_FILES) $(LUA_SOURCES) $(RAYLIB_LIB) | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(EMFLAGS) $(SRC_FILES) $(LUA_SOURCES) $(RAYLIB_LIB) -o $(OUTPUT).js
 
 # Generate compile commands for IDE integration
 compile_commands.json: $(SRC_FILES)
 	@echo '[' > compile_commands.json
 	@echo '  {' >> compile_commands.json
 	@echo '    "directory": "$(PWD)",' >> compile_commands.json
-	@echo '    "command": "$(CXX) $(CXXFLAGS) --sysroot=./emsdk/upstream/emscripten/cache/sysroot -D__EMSCRIPTEN__=1 -DPLATFORM_WEB=1 -DGRAPHICS_API_OPENGL_ES2=1 -DEMSCRIPTEN $(SRC_FILES)",' >> compile_commands.json
+	@echo '    "command": "$(CXX) $(CXXFLAGS) --sysroot=./emsdk/upstream/emscripten/cache/sysroot -D__EMSCRIPTEN__=1 -DPLATFORM_WEB=1 -DGRAPHICS_API_OPENGL_ES2=1 -DEMSCRIPTEN -I$(LUA_DIR) $(SRC_FILES)",' >> compile_commands.json
 	@echo '    "file": "$(SRC_FILES)"' >> compile_commands.json
 	@echo '  }' >> compile_commands.json
 	@echo ']' >> compile_commands.json

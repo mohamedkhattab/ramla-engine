@@ -51,8 +51,31 @@ fi
 
 print_status "All prerequisites are available!"
 
-# Step 1: Install Emscripten SDK
-print_status "Step 1/3: Installing Emscripten SDK..."
+# Step 1: Initialize Lua submodule
+print_status "Step 1/4: Setting up Lua submodule..."
+
+if [ ! -f "lua/lua.h" ]; then
+    print_status "Initializing Lua submodule..."
+    git submodule update --init --recursive
+    print_success "Lua submodule initialized!"
+else
+    print_status "Lua submodule already available"
+    print_success "Lua is ready!"
+fi
+
+# Convert Lua C files to C++ for simplified compilation
+print_status "Converting Lua C files to C++ extensions..."
+cd lua
+for file in *.c; do
+    if [ -f "$file" ]; then
+        mv "$file" "${file%.c}.cpp"
+    fi
+done
+cd ..
+print_success "Lua files converted to C++ format!"
+
+# Step 2: Install Emscripten SDK
+print_status "Step 2/4: Installing Emscripten SDK..."
 
 if [ ! -d "emsdk" ]; then
     print_status "Cloning Emscripten SDK..."
@@ -75,8 +98,8 @@ print_status "Activating Emscripten..."
 print_success "Emscripten SDK installed successfully!"
 cd ..
 
-# Step 2: Install Raylib
-print_status "Step 2/3: Installing Raylib..."
+# Step 3: Install Raylib
+print_status "Step 3/4: Installing Raylib..."
 
 if [ ! -d "raylib" ]; then
     print_status "Cloning Raylib..."
@@ -100,8 +123,8 @@ make PLATFORM=PLATFORM_WEB
 print_success "Raylib built successfully for WebAssembly!"
 cd ../..
 
-# Step 3: Build the project
-print_status "Step 3/3: Building the project..."
+# Step 4: Build the project
+print_status "Step 4/4: Building the project..."
 
 # Source Emscripten environment
 source emsdk/emsdk_env.sh
